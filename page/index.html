@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Детали заказа</title>
+</head>
+<body>
+    <div>
+        <h1>Детали заказа</h1>
+        <div>
+            <label for="orderNumberInput">Введите номер заказа:</label><br>
+            <input type="text" id="orderNumberInput" placeholder="Номер заказа"><br>
+            <button onclick="fetchOrderDetails()">Показать</button>
+        </div>
+        <div id="orderDetails"></div>
+    </div>
+
+    <script>
+        async function fetchOrderDetails() {
+            const orderNumber = document.getElementById('orderNumberInput').value;
+            const response = await fetch(`http://localhost:3001/api/${orderNumber}`);
+            
+            if (response.ok) {
+                const data = await response.json();
+                
+                // Формирование строки с данными заказа
+                let orderDetailsHtml = `<h2>Детали ${orderNumber} заказа</h2>`;
+                orderDetailsHtml += "<pre>" + JSON.stringify(data, null, 2) + "</pre>";
+                
+                // Вывод данных на страницу
+                document.getElementById('orderDetails').innerHTML = orderDetailsHtml;
+            } else if (response.status === 404) {
+                // Обработка случая, когда заказ не найден
+                document.getElementById('orderDetails').innerHTML = "<p>Заказ не найден</p>";
+            }
+        }
+    </script>
+</body>
+</html>
